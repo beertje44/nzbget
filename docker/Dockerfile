@@ -88,7 +88,7 @@ COPY --from=build /usr/bin/unrar7 /usr/bin/unrar7
 COPY --from=build /app/nzbget/ /app/nzbget/
 RUN \
   echo "**** install packages ****" && \
-  apk add --no-cache --update shadow libxml2 libxslt openssl 7zip boost1.82-json tzdata build-base gcc linux-headers musl-dev openjdk17-jre-headless py3-pip python3 python3-dev py3-wheel pipx && \
+  apk add --no-cache --update shadow libxml2 libxslt openssl 7zip python3 boost1.82-json tzdata openjdk17-jre-headless pipx && \
   ln -sf /usr/bin/python3 /usr/bin/python && \
   echo "**** install python packages ****" && \
   PIPX_HOME=/pipx pipx install beets && \
