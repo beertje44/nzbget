@@ -87,7 +87,6 @@ LABEL org.opencontainers.image.description="NZBGet from nzbget.com, version ${NZ
 LABEL org.opencontainers.image.source="https://github.com/nzbgetcom/nzbget"
 LABEL maintainer="nzbget@nzbget.com" 
 
-<<<<<<< HEAD
 ENV TERM=linux
 COPY --from=build /usr/bin/unrar /usr/bin/unrar
 COPY --from=build /usr/bin/unrar7 /usr/bin/unrar7
@@ -102,7 +101,9 @@ RUN \
   ln -s /usr/bin/7z /app/nzbget/7za && \
   ln -s /usr/bin/unrar /app/nzbget/unrar && \
   echo "**** install python packages ****" && \
+  echo "**** install python packages ****" && \
   PIPX_HOME=/pipx pipx install beets && \
+  mv /root/.local/bin /pipx && \
   mv /root/.local/bin /pipx && \
   echo "**** cleanup ****" && \
   rm -rf /root/.cache /root/.cargo /tmp/*
