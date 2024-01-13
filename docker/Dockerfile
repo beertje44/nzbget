@@ -2,6 +2,7 @@
 FROM alpine:3.19.1 AS build
 
 # args
+<<<<<<< HEAD
 ARG NZBGET_RELEASE=develop
 ARG UNRAR6_VERSION=6.2.12
 ARG UNRAR7_VERSION=7.0.7
