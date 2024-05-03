@@ -76,17 +76,13 @@ LABEL org.opencontainers.image.source="https://github.com/nzbgetcom/nzbget"
 LABEL maintainer="nzbget@nzbget.com" 
 
 ENV TERM linux
-COPY beets-1.6.0.tar.gz /tmp 
 RUN \
   echo "**** install packages ****" && \
-  apk add --no-cache --update shadow libxml2 libxslt openssl 7zip boost1.82-json tzdata build-base gcc linux-headers musl-dev openjdk17-jre-headless py3-pip python3 python3-dev py3-wheel && \
+  apk add --no-cache --update shadow libxml2 libxslt openssl 7zip boost1.82-json tzdata build-base gcc linux-headers musl-dev openjdk17-jre-headless py3-pip python3 python3-dev py3-wheel pipx && \
   ln -sf /usr/bin/python3 /usr/bin/python && \
   echo "**** install python packages ****" && \
-  cd /tmp && \
-  tar xzvf beets-1.6.0.tar.gz && \
-  cd beets-1.6.0 && \
-  touch `find . -type f` && \
-  python setup.py install && \
+  PIPX_HOME=/pipx pipx install beets && \
+  mv /root/.local/bin /pipx && \
   echo "**** cleanup ****" && \
   rm -rf /root/.cache /root/.cargo /tmp/*
 COPY --from=build /usr/bin/unrar /usr/bin/unrar
@@ -98,5 +94,5 @@ RUN chmod +x /entrypoint.sh && \
   adduser -G users -D -u 1000 -h /config -s /bin/sh user && \
   mkdir -p /config && \
   mkdir -p /downloads && \
-  chown -R user:users /app /config /downloads
+  chown -R user:users /app /config /downloads /pipx
 ENTRYPOINT [ "/entrypoint.sh" ]
