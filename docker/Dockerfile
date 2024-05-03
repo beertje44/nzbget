@@ -112,5 +112,6 @@ RUN chmod +x /entrypoint.sh && \
   mkdir -p /config && \
   mkdir -p /downloads && \
   chown -R user:users /app /config /downloads /pipx
+  chown -R user:users /app /config /downloads /pipx
 EXPOSE 6789
 ENTRYPOINT [ "/entrypoint.sh" ]
