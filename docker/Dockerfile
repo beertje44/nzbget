@@ -83,9 +83,11 @@ LABEL org.opencontainers.image.source="https://github.com/nzbgetcom/nzbget"
 LABEL maintainer="nzbget@nzbget.com" 
 
 ENV TERM linux
+<<<<<<< HEAD
 COPY --from=build /usr/bin/unrar /usr/bin/unrar
 COPY --from=build /usr/bin/unrar7 /usr/bin/unrar7
 COPY --from=build /app/nzbget/ /app/nzbget/
+COPY beets-1.6.0.tar.gz /tmp 
 RUN \
   echo "**** install packages ****" && \
   apk add --no-cache --update shadow libxml2 libxslt openssl 7zip python3 boost1.82-json tzdata openjdk17-jre-headless pipx && \
@@ -95,6 +97,12 @@ RUN \
   mv /root/.local/bin /pipx && \
   ln -s /usr/bin/7z /app/nzbget/7za && \
   ln -s /usr/bin/unrar /app/nzbget/unrar && \
+  echo "**** install python packages ****" && \
+  cd /tmp && \
+  tar xzvf beets-1.6.0.tar.gz && \
+  cd beets-1.6.0 && \
+  touch `find . -type f` && \
+  python setup.py install && \
   echo "**** cleanup ****" && \
   rm -rf /root/.cache /root/.cargo /tmp/*
 ADD docker/entrypoint.sh /entrypoint.sh
