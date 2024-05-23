@@ -71,7 +71,33 @@ RUN \
     -e "s|^InterDir=.*|InterDir=$\{MainDir\}/intermediate|g" \
     -e "s|^LogFile=.*|LogFile=$\{MainDir\}/nzbget.log|g" \
     -e "s|^AuthorizedIP=.*|AuthorizedIP=127.0.0.1|g" \
-  /app/nzbget/share/nzbget/nzbget.conf
+  /app/nzbget/share/nzbget/nzbget.conf && \
+  mv /app/nzbget/share/nzbget/webui /app/nzbget/ && \
+  cp /app/nzbget/share/nzbget/nzbget.conf /app/nzbget/webui/nzbget.conf.template && \
+  ln -s /usr/bin/7z /app/nzbget/7za && \
+  ln -s /usr/bin/unrar /app/nzbget/unrar && \
+  cp /nzbget/pubkey.pem /app/nzbget/pubkey.pem && \
+  curl -o /app/nzbget/cacert.pem -L "https://curl.se/ca/cacert.pem" && \
+  echo "**** install unrar7 from source ****" && \
+  mkdir /tmp/unrar7 && \
+  curl -o /tmp/unrar7.tar.gz -L "https://www.rarlab.com/rar/unrarsrc-${UNRAR7_VERSION}.tar.gz" && \
+  tar xf /tmp/unrar7.tar.gz -C /tmp/unrar7 --strip-components=1 && \
+  cd /tmp/unrar7 && \
+  if [ "${UNRAR7_NATIVE}" != "true" ] && [ "${TARGETPLATFORM}" == "linux/amd64" ]; \
+    then sed -i "s|CXXFLAGS=-march=native|CXXFLAGS=-march=x86-64-v2|" makefile; fi && \
+  if [ "${UNRAR7_NATIVE}" != "true" ] && [ "${TARGETPLATFORM}" == "linux/arm64" ]; \
+    then sed -i "s|CXXFLAGS=-march=native|CXXFLAGS=-march=armv8-a+crypto+crc|" makefile; fi && \
+  if [ "${UNRAR7_NATIVE}" != "true" ] && [ "${TARGETPLATFORM}" == "linux/arm/v7" ]; \
+    then sed -i "s|CXXFLAGS=-march=native|CXXFLAGS=-march=armv7-a|" makefile; fi && \
+  make -j ${MAKE_JOBS} && \
+  install -v -m755 unrar /usr/bin/unrar7 && \
+  echo "**** install unrar6 from source ****" && \
+  mkdir /tmp/unrar6 && \
+  curl -o /tmp/unrar6.tar.gz -L "https://www.rarlab.com/rar/unrarsrc-${UNRAR6_VERSION}.tar.gz" && \
+  tar xf /tmp/unrar6.tar.gz -C /tmp/unrar6 --strip-components=1 && \
+  cd /tmp/unrar6 && \
+  make -j ${MAKE_JOBS} && \
+  install -v -m755 unrar /usr/bin/
 
 # runtime stage
 FROM alpine:3.19.1
@@ -83,14 +109,13 @@ LABEL org.opencontainers.image.source="https://github.com/nzbgetcom/nzbget"
 LABEL maintainer="nzbget@nzbget.com" 
 
 ENV TERM linux
-<<<<<<< HEAD
 COPY --from=build /usr/bin/unrar /usr/bin/unrar
 COPY --from=build /usr/bin/unrar7 /usr/bin/unrar7
 COPY --from=build /app/nzbget/ /app/nzbget/
 COPY beets-1.6.0.tar.gz /tmp 
 RUN \
   echo "**** install packages ****" && \
-  apk add --no-cache --update shadow libxml2 libxslt openssl 7zip python3 boost1.82-json tzdata openjdk17-jre-headless pipx && \
+  apk add --no-cache --update shadow libxml2 libxslt openssl 7zip python3 boost1.82-json tzdata build-base gcc linux-headers musl-dev openjdk17-jre-headless openssl python3 python3-dev pipx && \
   ln -sf /usr/bin/python3 /usr/bin/python && \
   echo "**** install python packages ****" && \
   PIPX_HOME=/pipx pipx install beets && \
