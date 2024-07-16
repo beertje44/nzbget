@@ -79,6 +79,41 @@ RUN \
     -e "s|^AuthorizedIP=.*|AuthorizedIP=127.0.0.1|g" \
   /app/nzbget/share/nzbget/nzbget.conf
 
+#build nzbget
+ADD ./ nzbget
+RUN \
+  echo "**** build nzbget ****" && \
+  mkdir -p /app/nzbget && \
+  mkdir -p /nzbget/build && \
+  cd /nzbget/build && \
+  cmake .. -DCMAKE_INSTALL_PREFIX=/app/nzbget && \
+  cmake --build . -j ${MAKE_JOBS} && \
+  cmake --install . && \
+  mv /app/nzbget/bin/nzbget /app/nzbget/ && \
+  rm -rf /app/nzbget/bin/ && \
+  rm -rf /app/nzbget/etc/ && \
+  mv /app/nzbget/share/nzbget/webui /app/nzbget/ && \
+  cp /app/nzbget/share/nzbget/nzbget.conf /app/nzbget/webui/nzbget.conf.template && \ 
+  cp /nzbget/pubkey.pem /app/nzbget/pubkey.pem && \
+  curl -o /app/nzbget/cacert.pem -L "https://curl.se/ca/cacert.pem"
+
+#change default configvalues
+RUN \
+  sed -i \
+    -e "s|^MainDir=.*|MainDir=/downloads|g" \
+    -e "s|^ScriptDir=.*|ScriptDir=$\{MainDir\}/scripts|g" \
+    -e "s|^WebDir=.*|WebDir=$\{AppDir\}/webui|g" \
+    -e "s|^ConfigTemplate=.*|ConfigTemplate=$\{AppDir\}/webui/nzbget.conf.template|g" \
+    -e "s|^UnrarCmd=.*|UnrarCmd=unrar|g" \
+    -e "s|^SevenZipCmd=.*|SevenZipCmd=7z|g" \
+    -e "s|^CertStore=.*|CertStore=$\{AppDir\}/cacert.pem|g" \
+    -e "s|^CertCheck=.*|CertCheck=yes|g" \
+    -e "s|^DestDir=.*|DestDir=$\{MainDir\}/completed|g" \
+    -e "s|^InterDir=.*|InterDir=$\{MainDir\}/intermediate|g" \
+    -e "s|^LogFile=.*|LogFile=$\{MainDir\}/nzbget.log|g" \
+    -e "s|^AuthorizedIP=.*|AuthorizedIP=127.0.0.1|g" \
+  /app/nzbget/share/nzbget/nzbget.conf
+
 # runtime stage
 FROM alpine:3.19.1
 ARG NZBGET_RELEASE=develop
