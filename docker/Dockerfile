@@ -10,8 +10,13 @@ ARG MAKE_JOBS=32
 ARG TARGETPLATFORM
 
 #install build packages
+#install build packages
 RUN \
   echo "**** install build packages ****" && \
+  apk add g++ gcc git libxml2-dev libxslt-dev make ncurses-dev openssl-dev boost-dev curl cmake
+
+#install archive packages
+RUN \
   apk add g++ gcc git libxml2-dev libxslt-dev make ncurses-dev openssl-dev boost-dev curl cmake
 
 #install archive packages
