@@ -90,6 +90,9 @@ ENV TERM linux
 COPY --from=build /usr/bin/unrar /usr/bin/unrar
 COPY --from=build /usr/bin/unrar7 /usr/bin/unrar7
 COPY --from=build /app/nzbget/ /app/nzbget/
+COPY --from=build /usr/bin/unrar /usr/bin/unrar
+COPY --from=build /usr/bin/unrar7 /usr/bin/unrar7
+COPY --from=build /app/nzbget/ /app/nzbget/
 RUN \
   echo "**** install packages ****" && \
   apk add --no-cache --update curl glib libzen mediainfo shadow libxml2 libxslt openssl 7zip python3 boost1.82-json tzdata openjdk17-jre-headless pipx && \
