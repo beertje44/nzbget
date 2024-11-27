@@ -96,6 +96,9 @@ else()
 		if(NOT APPLE)
 			set(CURSES_NEED_WIDE TRUE)
 		endif()
+		if(NOT APPLE)
+			set(CURSES_NEED_WIDE TRUE)
+		endif()
 		find_package(Curses REQUIRED)
 		set(INCLUDES ${INCLUDES} ${CURSES_INCLUDE_DIRS})
 		set(LIBS ${LIBS} ${CURSES_LIBRARIES})
@@ -120,6 +123,8 @@ else()
 		set(INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIR})
 	endif()
 endif()
+
+include(${CMAKE_SOURCE_DIR}/lib/sources.cmake)
 
 include(${CMAKE_SOURCE_DIR}/lib/sources.cmake)
 
