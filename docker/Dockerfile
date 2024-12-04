@@ -90,9 +90,6 @@ RUN \
   echo "**** install packages ****" && \
   apk add --no-cache --update shadow libxml2 libxslt openssl 7zip python3 boost1.82-json tzdata openjdk17-jre-headless pipx && \
   ln -sf /usr/bin/python3 /usr/bin/python && \
-  echo "**** install python packages ****" && \
-  PIPX_HOME=/pipx pipx install beets && \
-  mv /root/.local/bin /pipx && \
   ln -s /usr/bin/7z /app/nzbget/7za && \
   ln -s /usr/bin/unrar /app/nzbget/unrar && \
   echo "**** install python packages ****" && \
