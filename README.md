@@ -26,6 +26,12 @@
 
 [![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?&logo=discord&logoColor=white)](https://discord.gg/mV9Vn9sM7C)
 
+## Forked from nzbgetcom/nzbget ##
+
+2 additions:
+- openjdk for Filebot for my autorenaming needs (Filebot itself is just a jar so no need to include in de docker image itself.)
+- beets: a python utility to fingerprint and autorename music files.
+Both of these need processing scripts to actually do something :)
 
 NZBGet is a binary downloader, which downloads files from Usenet based-on information given in nzb files.
 
