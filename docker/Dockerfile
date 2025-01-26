@@ -38,7 +38,7 @@ RUN \
   install -v -m755 unrar /usr/bin/
 
 #build nzbget
-ADD ./ nzbget
+ADD ./nzbget nzbget
 RUN \
   echo "**** build nzbget ****" && \
   mkdir -p /app/nzbget && \
